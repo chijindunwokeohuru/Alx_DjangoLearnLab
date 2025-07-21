@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Advanced Django Model Relationships
 # These models demonstrate ForeignKey, ManyToMany, and OneToOne relationships
@@ -36,3 +39,34 @@ class Librarian(models.Model):
     
     def __str__(self):
         return self.name
+
+
+class UserProfile(models.Model):
+    """Extended user profile with role-based access control"""
+    ROLE_CHOICES = [
+        ('Admin', 'Admin'),
+        ('Librarian', 'Librarian'),
+        ('Member', 'Member'),
+    ]
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='Member')
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    """Automatically create UserProfile when a new user is created"""
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    """Save UserProfile when user is saved"""
+    if hasattr(instance, 'userprofile'):
+        instance.userprofile.save()
+    else:
+        UserProfile.objects.create(user=instance)

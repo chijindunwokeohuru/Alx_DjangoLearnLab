@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard</title>
+</head>
+<body>
+    <h1>Member View</h1>
+    <p>Welcome, Member! Explore the library resources.</p>
+    <ul>
+        <li>Browse books</li>
+        <li>Search catalog</li>
+        <li>View library information</li>
+        <li>Member services</li>
+    </ul>
+    <a href="{% url 'list_books' %}">View Books</a> | <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>

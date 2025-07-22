@@ -1,6 +1,36 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.db import models
-from .models import Book
+from .models import Book, CustomUser
+
+
+# Custom User Admin
+class CustomUserAdmin(UserAdmin):
+    """Custom admin for CustomUser model"""
+    model = CustomUser
+    
+    # Add the custom fields to the admin interface
+    fieldsets = UserAdmin.fieldsets + (
+        ('Additional Info', {
+            'fields': ('date_of_birth', 'profile_photo')
+        }),
+    )
+    
+    # Add custom fields to the add form
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('Additional Info', {
+            'fields': ('date_of_birth', 'profile_photo')
+        }),
+    )
+    
+    # Display custom fields in the list view
+    list_display = ['username', 'email', 'first_name', 'last_name', 'date_of_birth', 'is_staff']
+    list_filter = ['is_staff', 'is_superuser', 'is_active', 'date_joined', 'date_of_birth']
+
+
+# Register the custom user model
+admin.site.register(CustomUser, CustomUserAdmin)
+
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):

@@ -140,13 +140,13 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
 
 # HTTPS Settings
 # Force HTTPS in production by ensuring cookies are sent over secure connections
-SECURE_SSL_REDIRECT = False  # Set to True in production with HTTPS
+SECURE_SSL_REDIRECT = True  # Redirect all non-HTTPS requests to HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Cookie Security
 # Ensure cookies are sent over HTTPS only (set to True in production)
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SECURE = True  # Ensure CSRF cookies are only transmitted over HTTPS
+SESSION_COOKIE_SECURE = True  # Ensure session cookies are only transmitted over HTTPS
 
 # Additional cookie security settings
 CSRF_COOKIE_HTTPONLY = True  # Prevent access to CSRF cookie via JavaScript
@@ -166,9 +166,9 @@ X_FRAME_OPTIONS = 'DENY'
 
 # HSTS (HTTP Strict Transport Security) settings
 # Force HTTPS for a specified duration (set in production)
-SECURE_HSTS_SECONDS = 0  # Set to 31536000 (1 year) in production
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year - instruct browsers to only access via HTTPS
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Include all subdomains in HSTS policy
+SECURE_HSTS_PRELOAD = True  # Allow preloading in browser HSTS preload lists
 
 # Referrer Policy
 # Control referrer information sent along with requests

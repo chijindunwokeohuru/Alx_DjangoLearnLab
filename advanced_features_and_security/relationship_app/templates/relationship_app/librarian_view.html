@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard</title>
+</head>
+<body>
+    <h1>Librarian View</h1>
+    <p>Welcome, Librarian! Manage the library resources.</p>
+    <ul>
+        <li>Manage books and authors</li>
+        <li>Library catalog</li>
+        <li>Member services</li>
+        <li>Book inventory</li>
+    </ul>
+    <a href="{% url 'list_books' %}">View Books</a> | <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>

@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('relationship_app.urls')),
+    path('bookshelf/', include('bookshelf.urls')),
 ]
 
 # Serve media files during development

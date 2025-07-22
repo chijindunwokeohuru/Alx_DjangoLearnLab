@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .book-item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
+        .btn { padding: 8px 16px; margin: 5px; text-decoration: none; border-radius: 4px; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .messages { margin: 20px 0; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Book Library</h1>
+    
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    {% if perms.bookshelf.can_create %}
+        <a href="{% url 'book_create' %}" class="btn btn-success">Add New Book</a>
+    {% endif %}
+    
+    <h2>Available Books</h2>
+    
+    {% for book in books %}
+        <div class="book-item">
+            <h3>{{ book.title }}</h3>
+            <p><strong>Author:</strong> {{ book.author }}</p>
+            <p><strong>Year:</strong> {{ book.publication_year }}</p>
+            
+            {% if perms.bookshelf.can_view %}
+                <a href="{% url 'book_detail' book.pk %}" class="btn btn-primary">View Details</a>
+            {% endif %}
+            
+            {% if perms.bookshelf.can_edit %}
+                <a href="{% url 'book_edit' book.pk %}" class="btn btn-warning">Edit</a>
+            {% endif %}
+            
+            {% if perms.bookshelf.can_delete %}
+                <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger">Delete</a>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No books available.</p>
+    {% endfor %}
+    
+    <p><a href="{% url 'admin:index' %}">Go to Admin</a></p>
+</body>
+</html>

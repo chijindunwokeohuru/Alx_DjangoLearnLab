@@ -35,12 +35,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'csp',  # Content Security Policy
     'bookshelf',
     'relationship_app',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',  # Content Security Policy middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -124,3 +126,108 @@ AUTH_USER_MODEL = 'bookshelf.CustomUser'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# =============================================================================
+# SECURITY SETTINGS
+# =============================================================================
+
+# SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG should be False in production to prevent information disclosure
+DEBUG = False  # Set to False for production
+
+# Allowed hosts - specify your domain names here for production
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.herokuapp.com']
+
+# HTTPS Settings
+# Force HTTPS in production by ensuring cookies are sent over secure connections
+SECURE_SSL_REDIRECT = False  # Set to True in production with HTTPS
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Cookie Security
+# Ensure cookies are sent over HTTPS only (set to True in production)
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+
+# Additional cookie security settings
+CSRF_COOKIE_HTTPONLY = True  # Prevent access to CSRF cookie via JavaScript
+SESSION_COOKIE_HTTPONLY = True  # Prevent access to session cookie via JavaScript
+CSRF_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy for CSRF cookie
+SESSION_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy for session cookie
+
+# Security Headers
+# Prevent browsers from MIME-sniffing responses
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable browser's XSS filtering
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevent site from being framed (clickjacking protection)
+X_FRAME_OPTIONS = 'DENY'
+
+# HSTS (HTTP Strict Transport Security) settings
+# Force HTTPS for a specified duration (set in production)
+SECURE_HSTS_SECONDS = 0  # Set to 31536000 (1 year) in production
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Referrer Policy
+# Control referrer information sent along with requests
+SECURE_REFERRER_POLICY = 'same-origin'
+
+# Content Security Policy (CSP)
+# Define trusted sources for content to prevent XSS attacks
+CONTENT_SECURITY_POLICY = {
+    'DIRECTIVES': {
+        'default-src': ("'self'",),
+        'script-src': ("'self'", "'unsafe-inline'"),  # Allow inline scripts for development
+        'style-src': ("'self'", "'unsafe-inline'"),   # Allow inline styles
+        'img-src': ("'self'", "data:", "https:"),
+        'font-src': ("'self'", "https:"),
+        'connect-src': ("'self'",),
+        'frame-ancestors': ("'none'",),  # Equivalent to X-Frame-Options: DENY
+    }
+}
+
+# Additional Security Settings
+# Prevent host header injection
+USE_L10N = True
+USE_TZ = True
+
+# Password validation (already configured above but ensuring security)
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 12,  # Increased minimum length for better security
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# Logging configuration for security events
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'security_file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': 'security.log',
+        },
+    },
+    'loggers': {
+        'django.security': {
+            'handlers': ['security_file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
+}

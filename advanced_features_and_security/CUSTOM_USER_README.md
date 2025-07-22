@@ -34,7 +34,7 @@ class CustomUserManager(BaseUserManager):
         # Creates and saves a superuser
 ```
 
-### 3. Settings Configuration (`LibraryProject/settings.py`)
+### 3. Settings Configuration (`LibraryProject/LibraryProject/settings.py`)
 
 Updated Django settings to use the custom user model:
 
@@ -62,7 +62,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ['is_staff', 'is_superuser', 'is_active', 'date_joined', 'date_of_birth']
 ```
 
-### 5. URL Configuration (`LibraryProject/urls.py`)
+### 5. URL Configuration (`LibraryProject/LibraryProject/urls.py`)
 
 Added media file serving for development:
 
@@ -127,8 +127,9 @@ advanced_features_and_security/
 │   │   ├── models.py           # CustomUser and CustomUserManager
 │   │   ├── admin.py            # CustomUserAdmin configuration
 │   │   └── migrations/         # Database migrations
-│   ├── settings.py             # AUTH_USER_MODEL configuration
-│   └── urls.py                 # Media files URL handling
+│   └── LibraryProject/
+│       ├── settings.py         # AUTH_USER_MODEL configuration
+│       └── urls.py             # Media files URL handling
 └── manage.py
 ```
 

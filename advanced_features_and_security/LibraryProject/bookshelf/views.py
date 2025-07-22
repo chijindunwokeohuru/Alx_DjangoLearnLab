@@ -7,6 +7,7 @@ from django.utils.html import escape
 from django.core.exceptions import ValidationError
 import re
 from .models import Book
+from .forms import ExampleForm
 
 
 def validate_input(value, field_name, max_length=255, pattern=None):

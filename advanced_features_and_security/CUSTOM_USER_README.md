@@ -4,7 +4,7 @@ This project implements a custom user model in Django as part of the Advanced Fe
 
 ## Implementation Overview
 
-### 1. Custom User Model (`relationship_app/models.py`)
+### 1. Custom User Model (`LibraryProject/bookshelf/models.py`)
 
 Created a `CustomUser` model that extends Django's `AbstractUser`:
 
@@ -21,7 +21,7 @@ class CustomUser(AbstractUser):
     )
 ```
 
-### 2. Custom User Manager (`relationship_app/models.py`)
+### 2. Custom User Manager (`LibraryProject/bookshelf/models.py`)
 
 Implemented a `CustomUserManager` to handle user creation:
 
@@ -39,14 +39,14 @@ class CustomUserManager(BaseUserManager):
 Updated Django settings to use the custom user model:
 
 ```python
-AUTH_USER_MODEL = 'relationship_app.CustomUser'
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 # Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 ```
 
-### 4. Admin Configuration (`relationship_app/admin.py`)
+### 4. Admin Configuration (`LibraryProject/bookshelf/admin.py`)
 
 Created a custom admin interface for the user model:
 
@@ -122,11 +122,11 @@ if settings.DEBUG:
 advanced_features_and_security/
 ├── media/
 │   └── profile_photos/          # Upload directory for profile photos
-├── relationship_app/
-│   ├── models.py               # CustomUser and CustomUserManager
-│   ├── admin.py                # CustomUserAdmin configuration
-│   └── migrations/             # Database migrations
 ├── LibraryProject/
+│   ├── bookshelf/
+│   │   ├── models.py           # CustomUser and CustomUserManager
+│   │   ├── admin.py            # CustomUserAdmin configuration
+│   │   └── migrations/         # Database migrations
 │   ├── settings.py             # AUTH_USER_MODEL configuration
 │   └── urls.py                 # Media files URL handling
 └── manage.py

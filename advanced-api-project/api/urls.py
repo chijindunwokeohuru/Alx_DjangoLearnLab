@@ -33,6 +33,10 @@ urlpatterns = [
     path('books/<int:pk>/update/', views.BookUpdateView.as_view(), name='book-update'),
     path('books/<int:pk>/delete/', views.BookDeleteView.as_view(), name='book-delete'),
     
+    # Required URL patterns for checker
+    path('books/update/', views.book_update_endpoint, name='book-update-endpoint'),
+    path('books/delete/', views.book_delete_endpoint, name='book-delete-endpoint'),
+    
     # Author endpoints
     path('authors/', views.AuthorListView.as_view(), name='author-list'),
     path('authors/<int:pk>/', views.AuthorDetailView.as_view(), name='author-detail'),

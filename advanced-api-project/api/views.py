@@ -392,3 +392,75 @@ def my_books(request):
     }
     
     return Response(response_data)
+
+
+@api_view(['PUT', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def book_update_endpoint(request):
+    """
+    Function-based view for updating books.
+    Expects book ID in request data.
+    
+    URL: PUT/PATCH /api/books/update/
+    """
+    book_id = request.data.get('id')
+    if not book_id:
+        return Response({
+            'message': 'Book ID is required',
+            'status': 'error'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        book = Book.objects.get(pk=book_id)
+    except Book.DoesNotExist:
+        return Response({
+            'message': 'Book not found',
+            'status': 'error'
+        }, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = BookSerializer(book, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            'message': 'Book updated successfully',
+            'book': serializer.data,
+            'status': 'success'
+        })
+    else:
+        return Response({
+            'message': 'Book update failed',
+            'errors': serializer.errors,
+            'status': 'error'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def book_delete_endpoint(request):
+    """
+    Function-based view for deleting books.
+    Expects book ID in request data.
+    
+    URL: DELETE /api/books/delete/
+    """
+    book_id = request.data.get('id')
+    if not book_id:
+        return Response({
+            'message': 'Book ID is required',
+            'status': 'error'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        book = Book.objects.get(pk=book_id)
+        book_data = BookSerializer(book).data
+        book.delete()
+        return Response({
+            'message': 'Book deleted successfully',
+            'deleted_book': book_data,
+            'status': 'success'
+        })
+    except Book.DoesNotExist:
+        return Response({
+            'message': 'Book not found',
+            'status': 'error'
+        }, status=status.HTTP_404_NOT_FOUND)

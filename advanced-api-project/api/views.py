@@ -3,7 +3,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework
 from rest_framework import filters
 
 from .models import Author, Book
@@ -57,7 +57,7 @@ class BookListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]  # Public read access
     
     # Step 1: Set Up Filtering - Configure filter backends
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     
     # Step 1: Filtering Configuration
     # Allow filtering by author (FK), publication_year, and title

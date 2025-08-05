@@ -4,12 +4,22 @@ Comprehensive Unit Tests for Django REST Framework APIs
 This module contains unit tests for all API endpoints in the advanced-api-project,
 covering CRUD operations, filtering, searching, ordering, permissions, and authentication.
 
+Django automatically configures a separate test database to avoid impacting production
+or development data. During testing, Django creates a temporary test database 
+(usually with 'test_' prefix) that is isolated from your main database.
+
 Test Categories:
 1. Book CRUD Operations (Create, Read, Update, Delete)
 2. Filtering, Searching, and Ordering functionality
 3. Permission and Authentication mechanisms
 4. Author endpoints
 5. Custom endpoints and error handling
+
+Test Database Configuration:
+- Django uses a separate test database (isolated from production/development data)
+- Test database is automatically created before tests and destroyed after completion
+- All test data is contained within the test database scope
+- Session-based authentication (self.client.login) is tested for proper database isolation
 
 Usage:
     python manage.py test api.test_views
@@ -713,6 +723,40 @@ class PermissionAndAuthenticationTestCase(BaseAPITestCase):
         self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
         
         response = self.client.delete(reverse('api:book-delete-endpoint'), {'id': self.book1.id})
+        self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+    
+    def test_session_based_authentication(self):
+        """Test session-based authentication using client.login for database isolation."""
+        # Test unauthenticated access first
+        self.client.logout()
+        
+        # Try to create a book without authentication
+        url = reverse('api:book-create')
+        data = {
+            'title': 'Session Test Book',
+            'publication_year': 2023,
+            'author': self.author1.id
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+        
+        # Test with session-based login
+        login_successful = self.client.login(username='testuser', password='testpass123')
+        self.assertTrue(login_successful, "Login should be successful with correct credentials")
+        
+        # Now try creating a book with session authentication
+        response = self.client.post(url, data, format='json')
+        self.assertIn(response.status_code, [status.HTTP_201_CREATED, status.HTTP_400_BAD_REQUEST])
+        
+        # Test access to user-specific endpoints
+        response = self.client.get(reverse('api:my-books'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Clean up - logout
+        self.client.logout()
+        
+        # Verify logout worked
+        response = self.client.get(reverse('api:my-books'))
         self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
 
 

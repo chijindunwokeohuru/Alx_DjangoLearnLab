@@ -13,19 +13,42 @@ from .serializers import AuthorSerializer, BookSerializer, SimpleAuthorSerialize
 
 class BookListView(generics.ListAPIView):
     """
-    Generic ListView for retrieving all books.
+    Generic ListView for retrieving all books with advanced filtering, searching, and ordering.
     
-    This view provides read-only access to all books in the database.
-    It supports filtering, searching, and ordering capabilities.
+    This view provides read-only access to all books in the database with comprehensive
+    query capabilities for filtering, searching, and ordering results.
     
     Permissions:
         - Read-only access for all users (authenticated and unauthenticated)
     
     Features:
         - Returns paginated list of all books
-        - Supports filtering by author, publication year
+        - Supports filtering by author, publication year, and custom date ranges
         - Supports search by title and author name
         - Supports ordering by multiple fields
+        - Custom filtering for publication year ranges
+    
+    Query Parameters:
+        Filtering:
+            ?author=<author_id> - Filter by specific author ID
+            ?publication_year=<year> - Filter by specific publication year
+            ?year_from=<year> - Filter books published from this year onwards
+            ?year_to=<year> - Filter books published up to this year
+            
+        Searching:
+            ?search=<query> - Search in book title and author name
+            
+        Ordering:
+            ?ordering=<field> - Order by field (title, publication_year, author__name)
+            ?ordering=-<field> - Reverse order (prefix with -)
+            ?ordering=<field1>,<field2> - Multiple field ordering
+    
+    Examples:
+        GET /api/books/?author=1&publication_year=2020
+        GET /api/books/?search=harry potter
+        GET /api/books/?ordering=-publication_year,title
+        GET /api/books/?year_from=2000&year_to=2020
+        GET /api/books/?search=tolkien&ordering=title
     
     URL: GET /api/books/
     """
@@ -33,31 +56,110 @@ class BookListView(generics.ListAPIView):
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]  # Public read access
     
-    # Add filtering, searching, and ordering capabilities
+    # Step 1: Set Up Filtering - Configure filter backends
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['author', 'publication_year']
+    
+    # Step 1: Filtering Configuration
+    # Allow filtering by author (FK), publication_year, and title
+    filterset_fields = {
+        'author': ['exact'],  # Filter by exact author ID
+        'publication_year': ['exact', 'gte', 'lte'],  # Exact year, greater/less than
+        'title': ['icontains'],  # Case-insensitive partial match
+    }
+    
+    # Step 2: Search Functionality Configuration
+    # Enable search across title and author name with case-insensitive matching
     search_fields = ['title', 'author__name']
-    ordering_fields = ['title', 'publication_year', 'author__name']
-    ordering = ['-publication_year', 'title']  # Default ordering
+    
+    # Step 3: Ordering Configuration  
+    # Allow ordering by all major fields
+    ordering_fields = ['title', 'publication_year', 'author__name', 'id']
+    ordering = ['-publication_year', 'title']  # Default ordering: newest first, then alphabetical
     
     def get_queryset(self):
         """
-        Optionally filter the queryset based on query parameters.
+        Custom queryset filtering for advanced filtering capabilities.
         
-        Additional custom filtering can be implemented here.
+        Implements custom filtering logic beyond basic DjangoFilterBackend:
+        - Publication year range filtering (year_from, year_to)
+        - Additional custom filters can be added here
+        
+        Returns:
+            QuerySet: Filtered queryset based on query parameters
         """
         queryset = super().get_queryset()
         
-        # Example: Filter by publication year range
+        # Custom filter: Publication year range
         year_from = self.request.query_params.get('year_from')
         year_to = self.request.query_params.get('year_to')
         
         if year_from:
-            queryset = queryset.filter(publication_year__gte=year_from)
+            try:
+                year_from = int(year_from)
+                queryset = queryset.filter(publication_year__gte=year_from)
+            except ValueError:
+                pass  # Ignore invalid year format
+                
         if year_to:
-            queryset = queryset.filter(publication_year__lte=year_to)
+            try:
+                year_to = int(year_to)
+                queryset = queryset.filter(publication_year__lte=year_to)
+            except ValueError:
+                pass  # Ignore invalid year format
+        
+        # Custom filter: Books by specific author name (case-insensitive)
+        author_name = self.request.query_params.get('author_name')
+        if author_name:
+            queryset = queryset.filter(author__name__icontains=author_name)
             
         return queryset
+    
+    def list(self, request, *args, **kwargs):
+        """
+        Override list method to provide additional context in response.
+        
+        Returns filtering and ordering information along with results.
+        """
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        # Get query parameters for context
+        query_params = dict(request.query_params)
+        
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            response = self.get_paginated_response(serializer.data)
+            
+            # Add filtering context to response
+            response.data['filters_applied'] = {
+                'search': request.query_params.get('search', None),
+                'ordering': request.query_params.get('ordering', self.ordering),
+                'filters': {k: v for k, v in query_params.items() 
+                           if k not in ['search', 'ordering', 'page']}
+            }
+            response.data['available_filters'] = {
+                'author': 'Filter by author ID (exact match)',
+                'publication_year': 'Filter by publication year (exact, gte, lte)',
+                'title': 'Filter by title (case-insensitive partial match)',
+                'year_from': 'Custom filter: books from this year onwards',
+                'year_to': 'Custom filter: books up to this year',
+                'author_name': 'Custom filter: books by author name (partial match)'
+            }
+            response.data['available_search'] = 'Search in: title, author name'
+            response.data['available_ordering'] = 'Order by: title, publication_year, author__name, id (prefix with - for descending)'
+            
+            return response
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'results': serializer.data,
+            'filters_applied': {
+                'search': request.query_params.get('search', None),
+                'ordering': request.query_params.get('ordering', self.ordering),
+                'filters': {k: v for k, v in query_params.items() 
+                           if k not in ['search', 'ordering']}
+            }
+        })
 
 
 class BookDetailView(generics.RetrieveAPIView):

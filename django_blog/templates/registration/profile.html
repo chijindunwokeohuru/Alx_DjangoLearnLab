@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Forahia News{% endblock title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user"></i> Profile</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <h4>Account Information</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ u_form.username.id_for_label }}" class="form-label">Username</label>
+                                    {{ u_form.username }}
+                                    {% if u_form.username.errors %}
+                                        <div class="text-danger">
+                                            {% for error in u_form.username.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ u_form.email.id_for_label }}" class="form-label">Email</label>
+                                    {{ u_form.email }}
+                                    {% if u_form.email.errors %}
+                                        <div class="text-danger">
+                                            {% for error in u_form.email.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ u_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                    {{ u_form.first_name }}
+                                    {% if u_form.first_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in u_form.first_name.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ u_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                    {{ u_form.last_name }}
+                                    {% if u_form.last_name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in u_form.last_name.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h4>Profile Information</h4>
+                        
+                        <div class="mb-3">
+                            <label for="{{ p_form.bio.id_for_label }}" class="form-label">Bio</label>
+                            {{ p_form.bio }}
+                            {% if p_form.bio.errors %}
+                                <div class="text-danger">
+                                    {% for error in p_form.bio.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ p_form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+                            {{ p_form.profile_picture }}
+                            {% if p_form.profile_picture.errors %}
+                                <div class="text-danger">
+                                    {% for error in p_form.profile_picture.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Update Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> Your Activity</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Posts written:</strong> {{ user.blog_posts.count }}</p>
+                    <p><strong>Comments made:</strong> {{ user.comment_set.count }}</p>
+                    <p><strong>Member since:</strong> {{ user.date_joined|date:"F Y" }}</p>
+                    
+                    <hr>
+                    <a href="{% url 'user-posts' user.username %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye"></i> View My Posts
+                    </a>
+                    <a href="{% url 'post-create' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-plus"></i> Write New Post
+                    </a>
+                </div>
+            </div>
+            
+            {% if user.profile.profile_picture %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="fas fa-image"></i> Profile Picture</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle" style="max-width: 150px;">
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

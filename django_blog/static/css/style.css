@@ -135,7 +135,7 @@ a:hover {
 }
 
 .card-header {
-    background: var(--gradient-primary);
+    background: #d1ecf1;
     color: #ffffff !important;
     border-radius: 12px 12px 0 0;
     border: none;
@@ -177,6 +177,16 @@ a:hover {
     transition: all 0.3s ease;
 }
 
+/* Authentication form styling */
+.auth-card {
+    box-shadow: 0 8px 25px var(--shadow-color);
+    border: none;
+}
+
+.auth-form {
+    padding: 1rem 0;
+}
+
 .form-control:focus {
     background-color: var(--input-bg);
     border-color: var(--link-color);
@@ -207,12 +217,12 @@ a:hover {
 }
 
 .btn-primary {
-    background: var(--gradient-primary);
+    background: #55cee3;
     color: #ffffff;
 }
 
 .btn-primary:hover {
-    background: var(--gradient-primary);
+    background: #55cee3;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
     color: #ffffff;

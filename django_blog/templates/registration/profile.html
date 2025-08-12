@@ -118,7 +118,7 @@
                     <p><strong>Member since:</strong> {{ user.date_joined|date:"F Y" }}</p>
                     
                     <hr>
-                    <a href="{% url 'user-posts' user.username %}" class="btn btn-outline-primary btn-sm">
+                    <a href="{% url 'user-posts' user.username %}" style="font-weight: 600; color: #55cee3;" class="btn btn-sm">
                         <i class="fas fa-eye"></i> View My Posts
                     </a>
                     <a href="{% url 'post-create' %}" class="btn btn-outline-success btn-sm">

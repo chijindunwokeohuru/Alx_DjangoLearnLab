@@ -1,0 +1,105 @@
+/* Authentication Forms Styling */
+
+/* Login Form Styles */
+.login-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.login-form .form-control {
+    margin-bottom: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.login-form .btn-primary {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+/* Register Form Styles */
+.register-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.register-form .form-control {
+    margin-bottom: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.register-form .btn-success {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+}
+
+/* Authentication Card Styles */
+.auth-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px var(--shadow-color);
+    overflow: hidden;
+}
+
+.auth-card .card-header {
+    background: #d1ecf1;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    border: none;
+}
+
+.auth-card .card-body {
+    padding: 2rem;
+}
+
+/* Form validation and error styles */
+.auth-form .text-danger {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.auth-form .form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.auth-form .form-control:focus {
+    border-color: var(--link-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Authentication links */
+.auth-links {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.auth-links a {
+    color: #8ddae8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-links a:hover {
+    color: #d1ecf1;
+    text-decoration: underline;
+}

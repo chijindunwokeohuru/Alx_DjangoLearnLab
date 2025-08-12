@@ -58,7 +58,7 @@ def profile(request):
 
 class PostListView(ListView):
     model = Post
-    template_name = 'blog/home.html'
+    template_name = 'blog/post_list.html'
     context_object_name = 'posts'
     paginate_by = 5
     ordering = ['-published_date']
@@ -78,7 +78,7 @@ class PostDetailView(DetailView):
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
-    template_name = 'blog/post_form.html'
+    template_name = 'blog/post_create.html'
     
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -88,7 +88,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
-    template_name = 'blog/post_form.html'
+    template_name = 'blog/post_update.html'
     
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -101,7 +101,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = 'blog/post_confirm_delete.html'
+    template_name = 'blog/post_delete.html'
     success_url = reverse_lazy('blog-home')
     
     def test_func(self):

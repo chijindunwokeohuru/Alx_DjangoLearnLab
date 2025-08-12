@@ -37,8 +37,13 @@ class PostForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
-            'tags': TagWidget(attrs={'class': 'form-control'}),
+            'tags': TagWidget(),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Apply Bootstrap classes to the TagWidget
+        self.fields['tags'].widget.attrs.update({'class': 'form-control'})
 
 
 class CommentForm(forms.ModelForm):

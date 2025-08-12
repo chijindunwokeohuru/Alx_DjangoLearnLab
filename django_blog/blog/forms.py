@@ -61,14 +61,14 @@ class ProfileUpdateForm(forms.ModelForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField()
+    # email = forms.EmailField()
 
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'email': forms.TextInput(attrs={'class': 'form-control', 'disabled': True}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
         }

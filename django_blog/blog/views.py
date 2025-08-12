@@ -144,7 +144,11 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == comment.author
     
     def get_success_url(self):
-        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+        # Handle both URL patterns: new logical structure and legacy
+        if 'post_pk' in self.kwargs:
+            return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['post_pk']})
+        else:
+            return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
 
 
 class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -156,7 +160,11 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user == comment.author
     
     def get_success_url(self):
-        return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
+        # Handle both URL patterns: new logical structure and legacy
+        if 'post_pk' in self.kwargs:
+            return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['post_pk']})
+        else:
+            return reverse_lazy('post-detail', kwargs={'pk': self.object.post.pk})
 
 
 @login_required

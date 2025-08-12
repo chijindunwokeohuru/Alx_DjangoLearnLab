@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Add Comment - Forahia News{% endblock title %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-comment"></i> Add Comment</h3>
+                    <p class="mb-0 text-muted">
+                        Commenting on: <strong>{{ post.title }}</strong>
+                    </p>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <small>
+                            <i class="fas fa-info-circle"></i>
+                            Share your thoughts about this post. Be respectful and constructive.
+                        </small>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ form.content.id_for_label }}" class="form-label">
+                                <strong>Your Comment</strong>
+                            </label>
+                            {{ form.content }}
+                            {% if form.content.errors %}
+                                <div class="text-danger mt-2">
+                                    {% for error in form.content.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'post-detail' post.pk %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Post
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-comment"></i> Add Comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

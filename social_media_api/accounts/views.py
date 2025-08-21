@@ -28,7 +28,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 from django.contrib.auth import authenticate
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
 from django.contrib.auth import get_user_model
@@ -37,7 +37,7 @@ User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
 	serializer_class = UserRegistrationSerializer
-
+	permission_classes = [permissions.IsAuthenticated]
 	def create(self, request, *args, **kwargs):
 		serializer = self.get_serializer(data=request.data)
 		serializer.is_valid(raise_exception=True)
@@ -50,7 +50,7 @@ class RegisterView(generics.CreateAPIView):
 
 class LoginView(ObtainAuthToken):
 	serializer_class = UserLoginSerializer
-
+	permission_classes = [permissions.IsAuthenticated]
 	def post(self, request, *args, **kwargs):
 		serializer = self.serializer_class(data=request.data, context={'request': request})
 		serializer.is_valid(raise_exception=True)
@@ -63,7 +63,7 @@ class LoginView(ObtainAuthToken):
 			'token': token.key
 		})
 
-class ProfileView(generics.RetrieveUpdateAPIView):
+	permission_classes = [permissions.IsAuthenticated]
 	serializer_class = UserProfileSerializer
 	permission_classes = [IsAuthenticated]
 

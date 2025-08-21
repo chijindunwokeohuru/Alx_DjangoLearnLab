@@ -1,7 +1,17 @@
+
+
+from rest_framework import generics, status, permissions
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from django.contrib.auth import authenticate
+from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
+from django.contrib.auth import get_user_model
 from .models import CustomUser
+
 class FollowUserView(generics.GenericAPIView):
 	queryset = CustomUser.objects.all()
-	permission_classes = [IsAuthenticated]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def post(self, request, user_id):
 		user_to_follow = self.get_object()
@@ -11,10 +21,9 @@ class FollowUserView(generics.GenericAPIView):
 		user_to_follow.followers.add(request.user)
 		return Response({'detail': f'You are now following {user_to_follow.username}.'}, status=status.HTTP_200_OK)
 
-
 class UnfollowUserView(generics.GenericAPIView):
 	queryset = CustomUser.objects.all()
-	permission_classes = [IsAuthenticated]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def post(self, request, user_id):
 		user_to_unfollow = self.get_object()
@@ -24,20 +33,12 @@ class UnfollowUserView(generics.GenericAPIView):
 		user_to_unfollow.followers.remove(request.user)
 		return Response({'detail': f'You have unfollowed {user_to_unfollow.username}.'}, status=status.HTTP_200_OK)
 
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework import permissions
-from django.contrib.auth import authenticate
-from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
 	serializer_class = UserRegistrationSerializer
-	permission_classes = [permissions.IsAuthenticated]
+
 	def create(self, request, *args, **kwargs):
 		serializer = self.get_serializer(data=request.data)
 		serializer.is_valid(raise_exception=True)
@@ -50,7 +51,7 @@ class RegisterView(generics.CreateAPIView):
 
 class LoginView(ObtainAuthToken):
 	serializer_class = UserLoginSerializer
-	permission_classes = [permissions.IsAuthenticated]
+
 	def post(self, request, *args, **kwargs):
 		serializer = self.serializer_class(data=request.data, context={'request': request})
 		serializer.is_valid(raise_exception=True)
@@ -63,9 +64,9 @@ class LoginView(ObtainAuthToken):
 			'token': token.key
 		})
 
-	permission_classes = [permissions.IsAuthenticated]
+class ProfileView(generics.RetrieveUpdateAPIView):
 	serializer_class = UserProfileSerializer
-	permission_classes = [IsAuthenticated]
+	permission_classes = [permissions.IsAuthenticated]
 
 	def get_object(self):
 		return self.request.user
